@@ -4,8 +4,10 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
+/todoapp_data/
 /Todo-App.iml
-/tasks.json
+*.iml
+*.iws
 
 ### Eclipse ###
 .apt_generated

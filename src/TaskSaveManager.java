@@ -3,11 +3,20 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class TaskSaveManager {
+    public static final String DATA_DIRECTORY = "todoapp_data";
     private static final String SAVE_FILE = "tasks.json";
+
+    private static File getSaveFile() {
+        File dataDir = new File(DATA_DIRECTORY);
+        if (!dataDir.exists()) {
+            dataDir.mkdirs(); // Create the directory
+        }
+        return new File(dataDir, SAVE_FILE);
+    }
 
     public static void saveTasks(JPanel taskComponentPanel) {
         try {
@@ -25,8 +34,9 @@ public class TaskSaveManager {
                 }
             }
 
-            Files.write(Paths.get(SAVE_FILE), tasksArray.toString(4).getBytes());
-            System.out.println("Tasks saved successfully!");
+            File saveFile = getSaveFile();
+            Files.write(saveFile.toPath(), tasksArray.toString(4).getBytes());
+            System.out.println("Tasks saved to " + saveFile.getAbsolutePath() + " successfully!");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error saving tasks: " + e.getMessage());
         }
@@ -34,11 +44,12 @@ public class TaskSaveManager {
 
     public static void loadTasks(JPanel taskComponentPanel) {
         try {
-            if (!Files.exists(Paths.get(SAVE_FILE))) {
+            File saveFile = getSaveFile();
+            if (!saveFile.exists()) {
                 return;
             }
 
-            String content = new String(Files.readAllBytes(Paths.get(SAVE_FILE)));
+            String content = new String(Files.readAllBytes(saveFile.toPath()));
             JSONArray tasksArray = new JSONArray(content);
 
             taskComponentPanel.removeAll();
