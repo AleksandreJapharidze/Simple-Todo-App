@@ -6,6 +6,7 @@ public class TaskComponent extends JPanel implements ActionListener {
     private JCheckBox taskCheckBox;
     private JTextPane taskField;
     private JButton deleteButton;
+    private JComboBox<String> dueComboBox;
 
     public JTextPane getTaskField() {
         return taskField;
@@ -15,10 +16,17 @@ public class TaskComponent extends JPanel implements ActionListener {
         return taskCheckBox;
     }
 
+    public JComboBox<String> getDueComboBox() {
+        return dueComboBox;
+    }
+
     private JPanel parentPanel;
 
     public TaskComponent(JPanel parentPanel) {
         this.parentPanel = parentPanel;
+        setLayout(new BorderLayout());
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         taskField = new JTextPane();
         taskField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -46,9 +54,29 @@ public class TaskComponent extends JPanel implements ActionListener {
         deleteButton.setPreferredSize(CommonConfig.DELETEBUTTON_SIZE);
         deleteButton.addActionListener(this);
 
-        add(taskField);
-        add(taskCheckBox);
-        add(deleteButton);
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        String[] dueTime = new String[96];
+        for (int i = 0; i < 24; i++) {
+            for (int j = 0; j < 60; j += 15) {
+                String time = String.format("%02d:%02d", i, j);
+                dueTime[i * 4 + j / 15] = time;
+            }
+        }
+
+        dueComboBox = new JComboBox<>(dueTime);
+        dueComboBox.setPreferredSize(CommonConfig.DUE_COMBOBOX_SIZE);
+        dueComboBox.setSelectedIndex(-1);
+        dueComboBox.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        topPanel.add(taskField);
+        topPanel.add(taskCheckBox);
+        topPanel.add(deleteButton);
+
+        bottomPanel.add(dueComboBox);
+
+        add(topPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     @Override

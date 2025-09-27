@@ -28,6 +28,7 @@ public class TaskSaveManager {
 
                     JSONObject taskObject = new JSONObject();
                     taskObject.put("text", taskComponent.getTaskField().getText());
+                    taskObject.put("dueTime", taskComponent.getDueComboBox().getSelectedItem());
                     taskObject.put("completed", (taskComponent.getTaskCheckBox()).isSelected());
 
                     tasksArray.put(taskObject);
@@ -60,6 +61,7 @@ public class TaskSaveManager {
                 TaskComponent taskComponent = new TaskComponent(taskComponentPanel);
                 taskComponentPanel.add(taskComponent);
                 taskComponent.getTaskField().setText(taskObject.getString("text"));
+                taskComponent.getDueComboBox().setSelectedItem(taskObject.getString("dueTime"));
 
                 JCheckBox checkBox = taskComponent.getTaskCheckBox();
                 checkBox.setSelected(taskObject.getBoolean("completed"));
