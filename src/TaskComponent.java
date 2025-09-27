@@ -121,7 +121,7 @@ public class TaskComponent extends JPanel implements ActionListener {
                 dueTrackerLabel.setText("Overdue!");
             } else {
                 taskField.setBackground(null);
-                dueTrackerLabel.setText("");
+                dueTrackerLabel.setText("Due at " + selectedDueTime);
             }
         }
     }
