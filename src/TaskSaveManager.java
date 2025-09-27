@@ -7,7 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 
 public class TaskSaveManager {
-    public static final String DATA_DIRECTORY = "todoapp_data";
+    private static final String DATA_DIRECTORY = "todoapp_data";
     private static final String SAVE_FILE = "tasks.json";
 
     private static File getSaveFile() {
@@ -28,7 +28,7 @@ public class TaskSaveManager {
 
                     JSONObject taskObject = new JSONObject();
                     taskObject.put("text", taskComponent.getTaskField().getText());
-                    taskObject.put("completed", ((JCheckBox) taskComponent.getComponents()[1]).isSelected());
+                    taskObject.put("completed", (taskComponent.getTaskCheckBox()).isSelected());
 
                     tasksArray.put(taskObject);
                 }
@@ -61,7 +61,7 @@ public class TaskSaveManager {
                 taskComponentPanel.add(taskComponent);
                 taskComponent.getTaskField().setText(taskObject.getString("text"));
 
-                JCheckBox checkBox = (JCheckBox) taskComponent.getComponents()[1];
+                JCheckBox checkBox = taskComponent.getTaskCheckBox();
                 checkBox.setSelected(taskObject.getBoolean("completed"));
                 if (checkBox.isSelected()) {
                     String taskText = taskComponent.getTaskField().getText().replaceAll("<[^>]*>", "");

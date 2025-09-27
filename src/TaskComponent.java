@@ -11,6 +11,10 @@ public class TaskComponent extends JPanel implements ActionListener {
         return taskField;
     }
 
+    public JCheckBox getTaskCheckBox() {
+        return taskCheckBox;
+    }
+
     private JPanel parentPanel;
 
     public TaskComponent(JPanel parentPanel) {
