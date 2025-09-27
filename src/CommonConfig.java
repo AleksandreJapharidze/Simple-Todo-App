@@ -8,6 +8,6 @@ public class CommonConfig {
     public static final Dimension TASKFIELD_SIZE = new Dimension((int) (TASKPANEL_SIZE.width * 0.80), 50);
     public static final Dimension CHECKBOX_SIZE = new Dimension((int) (TASKFIELD_SIZE.width * 0.05), 50);
     public static final Dimension DELETEBUTTON_SIZE = new Dimension((int) (TASKFIELD_SIZE.width * 0.12), 50);
-    public static final Dimension DUE_COMBOBOX_SIZE = new Dimension((int) (TASKFIELD_SIZE.width * 0.20), 25);
+    public static final Dimension DUE_COMBOBOX_SIZE = new Dimension((int) (TASKFIELD_SIZE.width * 0.30), 25);
     public static final Dimension SAVEBUTTON_SIZE = new Dimension(GUI_SIZE.width, 50);
 }

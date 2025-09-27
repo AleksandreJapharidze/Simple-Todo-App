@@ -97,7 +97,7 @@ public class TodoAppGUI extends JFrame implements ActionListener {
         if (result == JOptionPane.YES_OPTION) {
             TaskSaveManager.saveTasks(taskComponentPanel);
         } else if (result == JOptionPane.CANCEL_OPTION) {
-            return; // Do not exit
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         }
 
         System.exit(0);
