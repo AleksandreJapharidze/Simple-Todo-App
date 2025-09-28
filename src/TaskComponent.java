@@ -196,8 +196,13 @@ public class TaskComponent extends JPanel implements ActionListener {
 
         String selectedDueTime = (String) dueComboBox.getSelectedItem();
         if (selectedDueTime.equalsIgnoreCase("No Deadline")) {
-            taskField.setBackground(null);
-            dueTrackerLabel.setText("");
+            if (!taskCheckBox.isSelected()) {
+                taskField.setBackground(null);
+                dueTrackerLabel.setText("");
+            } else {
+                taskField.setBackground(null);
+                dueTrackerLabel.setText("Completed!");
+            }
             return;
         }
 
