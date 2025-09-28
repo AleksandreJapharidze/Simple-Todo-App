@@ -11,6 +11,10 @@ public class TaskComponent extends JPanel implements ActionListener {
     private JComboBox<String> dueComboBox;
     private JLabel dueTrackerLabel;
 
+    private Point mouseOffset;
+    private int originalIndex;
+    private boolean isDragging = false;
+
     public JTextPane getTaskField() {
         return taskField;
     }
@@ -21,6 +25,10 @@ public class TaskComponent extends JPanel implements ActionListener {
 
     public JComboBox<String> getDueComboBox() {
         return dueComboBox;
+    }
+
+    public JLabel getDueTrackerLabel() {
+        return dueTrackerLabel;
     }
 
     private JPanel parentPanel;
@@ -55,6 +63,7 @@ public class TaskComponent extends JPanel implements ActionListener {
 
         deleteButton = new JButton("X");
         deleteButton.setPreferredSize(CommonConfig.DELETEBUTTON_SIZE);
+        deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         deleteButton.addActionListener(this);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -87,6 +96,85 @@ public class TaskComponent extends JPanel implements ActionListener {
 
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                mouseOffset = e.getPoint();
+                originalIndex = parentPanel.getComponentZOrder(TaskComponent.this);
+                isDragging = true;
+                setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                isDragging = false;
+                setBorder(null);
+                revalidate();
+                repaint();
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (!isDragging) return;
+
+                Point currentMouse = e.getLocationOnScreen();
+                SwingUtilities.convertPointFromScreen(currentMouse, parentPanel);
+
+                // Calculate the center point of the dragged component
+                Point componentCenter = new Point(
+                        currentMouse.x,
+                        currentMouse.y - mouseOffset.y + getHeight() / 2
+                );
+
+                // Find the new index based on the Y position
+                int newIndex = getTargetIndex(componentCenter.y);
+
+                if (newIndex >= 0 && newIndex < parentPanel.getComponentCount()
+                        && newIndex != getComponentIndex()) {
+                    // Move component to new position
+                    parentPanel.remove(TaskComponent.this);
+                    parentPanel.add(TaskComponent.this, newIndex);
+                    parentPanel.revalidate();
+                    parentPanel.repaint();
+                }
+            }
+        });
+
+        taskField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                e.consume(); // Prevent dragging when clicking inside the text field
+            }
+        });
+
+        setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    }
+
+    private int getComponentIndex() {
+        Container parent = getParent();
+        for (int i = 0; i < parent.getComponentCount(); i++) {
+            if (parent.getComponent(i) == this) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getTargetIndex(int y) {
+        Container parent = getParent();
+        int count = parent.getComponentCount();
+
+        for (int i = 0; i < count; i++) {
+            Component comp = parent.getComponent(i);
+            int compMiddle = comp.getY() + comp.getHeight() / 2;
+            if (y < compMiddle) {
+                return i;
+            }
+        }
+        return count - 1;
     }
 
     @Override
@@ -94,6 +182,7 @@ public class TaskComponent extends JPanel implements ActionListener {
         if (taskCheckBox.isSelected()) {
             String taskText = taskField.getText().replaceAll("<[^>]*>", "");
             taskField.setText("<strike>" + taskText + "</strike>");
+            dueTrackerLabel.setText("Completed!");
         } else if (!taskCheckBox.isSelected()) {
             String taskText = taskField.getText().replaceAll("<[^>]*>", "");
             taskField.setText(taskText);
@@ -119,9 +208,14 @@ public class TaskComponent extends JPanel implements ActionListener {
             if (selectedTime.isBefore(currentTime) && !taskCheckBox.isSelected()) {
                 taskField.setBackground(Color.PINK);
                 dueTrackerLabel.setText("Overdue!");
-            } else {
+            } else if (selectedTime.isAfter(currentTime) && !taskCheckBox.isSelected()) {
                 taskField.setBackground(null);
                 dueTrackerLabel.setText("Due at " + selectedDueTime);
+            }
+
+            if (taskCheckBox.isSelected()) {
+                taskField.setBackground(null);
+                dueTrackerLabel.setText("Completed!");
             }
         }
     }

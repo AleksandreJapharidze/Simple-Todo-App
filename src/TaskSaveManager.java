@@ -68,6 +68,7 @@ public class TaskSaveManager {
                 if (checkBox.isSelected()) {
                     String taskText = taskComponent.getTaskField().getText().replaceAll("<[^>]*>", "");
                     taskComponent.getTaskField().setText("<strike>" + taskText + "</strike>");
+                    taskComponent.getDueTrackerLabel().setText("Completed!");
                 }
             }
 
