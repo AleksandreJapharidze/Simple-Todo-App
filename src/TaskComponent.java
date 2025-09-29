@@ -120,23 +120,17 @@ public class TaskComponent extends JPanel implements ActionListener {
             public void mouseDragged(MouseEvent e) {
                 if (!isDragging) return;
 
-                Point currentMouse = e.getLocationOnScreen();
-                SwingUtilities.convertPointFromScreen(currentMouse, parentPanel);
-
                 // Calculate the center point of the dragged component
-                Point componentCenter = new Point(
-                        currentMouse.x,
-                        currentMouse.y - mouseOffset.y + getHeight() / 2
-                );
+                int mouseY = SwingUtilities.convertPoint(TaskComponent.this, e.getPoint(), parentPanel).y;
 
                 // Find the new index based on the Y position
-                int newIndex = getTargetIndex(componentCenter.y);
+                int newY = getTargetIndex(mouseY);
 
-                if (newIndex >= 0 && newIndex < parentPanel.getComponentCount()
-                        && newIndex != getComponentIndex()) {
+                if (newY >= 0 && newY < parentPanel.getComponentCount()
+                        && newY != getComponentIndex()) {
                     // Move component to new position
                     parentPanel.remove(TaskComponent.this);
-                    parentPanel.add(TaskComponent.this, newIndex);
+                    parentPanel.add(TaskComponent.this, newY);
                     parentPanel.revalidate();
                     parentPanel.repaint();
                 }
